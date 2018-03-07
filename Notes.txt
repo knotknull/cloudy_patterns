@@ -174,14 +174,16 @@ http://bravenewgeek.com/everything-you-know-about-latency-is-wrong
 	  - git SHA                                  [ Measturements ]
 	  - package coordinates 			- business metrics
 	  - API version					- tech metrics
-	
-
+                  |                                           |	
+                  |------------------|------------------------|
                          ---------------------
                          -                   -
                          -     service       -
                          -    Telemetry      -
                          -                   -
                          ---------------------
+                  |------------------|------------------------|
+                  |                                           |	
 
 	[ Health ]				    [ Qualitative  ] 
 	 - Me                                       [ Observations ]
@@ -403,3 +405,123 @@ Senneca.js : pattern matching
 http://senecajs.org/
 
 
+
+## Runtime Patterns > Runtime Reconfiguration 
+## 
+	- Context: Want to make configuration changes at runtime that are quick and
+                   dont otherwise disturbe the state of the running system
+	- Problem: Configuration changes are often coupled to deployment events.
+	- Forces:  Configuration often happens only as a boot time evenet
+		   Environment Vars only injected as part of a deployment event 
+		   Debugging often implies "turning up the volume" on observability.
+                      Sometimes we need a "pre-warmed" system to listen to.	
+                   Decoupling feature releases from deployment through feature toggles
+                      requires runtime config change
+                   Rotating DB credentials should be faster than (and not require) 
+                      the deployment pipeline.
+
+	Solution: Config Server + Management Bus
+
+
+		----------- 	   -----------	    
+	        -         -	   -         -	   
+	        - github  -  <->   -  Config -    ---------------------------------	
+	        -         -	   -  Server -	                                  |
+                -----------	   -----------	                                  |
+                                ^       ^      ^                                  |
+                               /        |       \                                 |
+                              /         |        \                                |
+                             /          |         \                               |
+		----------- 	   -----------	     -----------	          |
+	        -         -	   -         -	     -         -	          |
+	        - brick a -  <->   - brick b -	<->  - brick c -	          |
+	        -         -	   -         -	     -         -	          |
+                -----------	   -----------	     -----------	          |
+                            ^           ^          ^                              |
+                             \          |         /                               |
+                              \         |        /                                |
+                               \        |       /                                 |
+                                V       V      V                                  |
+		           	  ----------------                                |
+	                   	  -              -	                          |
+	                          -  Management  -  <-------------------------------
+	                   	  -     Bus      -
+                           	  ----------------
+
+
+
+
+
+## Runtime Patterns > Concurrent Exec
+## 
+
+	- Context: Users want features, not deployments.  Experiments often require concurrent
+                   execution of multiple software versions.
+	- Problem: Traditional techniques for managing deployments require downtime events
+                   and don't support concurrent execution fo multiple software versions.
+	- Forces : Feature releases are coupled to deployment events
+                   Production deployments will often target a single infrastructure env
+                   Failed deployments exacerbate downtime events.
+                   Hypotheses validaton requires selective UX
+                   Selective UX in a monolithic application is complex / error prone.
+
+	- Solution:  Router + Service Registry
+
+
+		----------- 	   -----------	     	   -----------	    
+	        -         -	   -         -	   	   -         -	   
+	        - Route   -  <->   -  Router -      <->    - Service -  <---------|  
+	        - Manager -	   -         -	  	   - Registry-	          |
+                -----------	   -----------	 	   -----------	          |  
+                                ^              ^                                  |
+                               /                \  Pool                           |
+                        Pool  /                  \ Selection                      |
+                  Selection  /                    \                               |
+		------------ 	              	     ------------	          |
+	        -          -	              	     -          -	          |
+	        - brick v1 -                  	     - brick v2 -  ---------------|
+	        -          -	              	     -          -	         
+                ------------	          	     ------------	        
+                                                                               
+                           
+                          
+                         
+                        
+
+## Runtime Patterns > Brick Telemetry
+## 
+	- Context: Realizing the DevOps way of Feedback requires that we have visibility into
+                   both the business value and the technical behavior generated by our services
+	- Problem: Common approaches to service visibility fall short of architectural quality we need
+	- Forces : Visiblity is often accomplished via post facto application of agent-based 
+                   monitoring tools.
+		   Agent-based monitoring tools don't understand business value
+		   Determining an applications health often requires comples logic
+		   Traceability of an application is difficult to accomplish w/ OTS solutions
+	- Solutions: 
+                     Traceability Components (/info)
+			- git traceabiliity adapter            ---> git properties file
+			- maven traceabiliity adapter          ---> maven properties file
+			- api version traceabiliity adapter
+			- feature toggle traceabiliity adapter ---> feature toggle framework
+
+                     Health Components 
+			- db health indicator                  ---> test db query
+			- business compnent A health indicator ---> business component A 
+			- disk space heal indicator 
+			- business compnent B health indicator ---> business component A 
+
+                     Metrics Components 
+			- Metrics Registry 
+			- Metrics Reporter 
+			- Business Component A   -> Timer Metric Recorder
+			- Business Component B   -> Histogram Metric Recorder
+			- Business Component C   -> Gauge Metric Recorder
+
+
+
+		----------- 	   -----------	     -----------	-----------
+	        -         -	   -         -	     -         -	- trace   -
+	        - client  -  <->   - trace   -	<->  - trace   -   <->  - info    -
+	        -         -	   - endpoint-	     - adapter -	- source  -
+                -----------	   -----------	     -----------	-----------
