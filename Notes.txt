@@ -257,3 +257,149 @@ https://c4model.com
 Architecture / design is the code !!
 
 
+
+
+################################################################################
+##
+## Brick and Mortar Pattern Language
+##
+################################################################################
+
+	- Context
+		The basic current situation 
+	- Problem
+		Presents the problems as a system forces which must be balanced
+	- Solution
+		Describes the components that make up the general solution, how they relate to one another 
+		and their runtime interactions
+
+
+
+	Brick Patterns :  Patterns for constructing individual (micro)services
+	Mortar Patterns:  Patterns for composing bricks into complete distributed systems
+
+
+
+## Brick Patterns 
+## 
+	- Externalization Patterns: Structural patterns for creating deployable, disposable 
+                                    and replaceable bricks
+		- Externalized Configuration
+		- Externalized State
+		- Externalized Channels
+
+	- Runtime Patterns: Behavioral patterns for creating deployable, replaceable 
+                            and observable bricks
+		- Runtime Reconfiguration
+		- Concurrent Executions
+		- Brick Telemetry
+
+
+
+## Mortar Patterns 
+## 
+	- Distributed Systems Patterns: Composition patterns addressing common distributed system challenges
+		- Service Discovery
+		- Edge Gateway
+		- Fault Tolerance
+
+	- Integraion Patterns: Composition patterns addressing integrations and observability challenges
+		- Event-Driven System
+		- Contract Management 
+		- Integration Telemetry
+
+
+
+
+
+## Externalization Patterns > Externalized Configuration 
+## 
+	Context: Applications config will vary independently from its code throught its lifecycle
+	Problem: Traditional techniques for manageing configuration tightly couple these two orthogonal concepts
+	Forces:  Different env have different configs
+			- resource handles to databse
+			- credentials to external services
+			- per deploy values: test vs. qa
+			- features toggled on/off
+			- Config often bundled with deployment artifacts
+			- Build processes often modify configuration based on args
+			- Deployment pipeline should only buyild each artifact once.
+
+
+	Components: 
+		- The Environment: Sources of configuration name/value pairs 
+		- Environment Adapter: Component that understands a particular source of configuration
+                                       and extracts anme/value pairs from it
+		- Configuration Repository: Component that manages the aggregate configuration of the brick
+		- Brick Component: Business component that is interested in configuration
+
+
+
+## Environment Adapter
+## 
+	- Environment Variables
+	- Start Command Arguments
+	- Database
+	- Configuration Service
+
+
+
+
+
+
+
+
+## Externalization Patterns > Externalized State 
+## 
+	- Context: Disposability / Replaceability require elimination of "snowflake deployements"
+	- Problem: Traditional state management techniques prevent us from achieving phoenix deployements
+	- Forces : 
+		- Early web architecture emphasized server state management
+		- Statefule Scaffolding on Stateless Protocol (HTTP)
+		- Cloud Infrastructure
+			- Limited load balancer support
+			- Limited support for persistence
+
+	- Solution:
+		- Single-Page Application
+			- Persist to Local Storage
+			- Persist completed work to database via HTTP 
+
+		----------- 	   -----------	     -----------	
+	        -         -	   -         -	     - service -	
+	        - browser -  <->   -Stateless-	<->  - database-	
+	        -         -	   -         -	     -         -	
+                -----------	   -----------	     -----------	
+
+		- Externalized Session 
+			- interact with State manager
+
+		----------- 	   -----------	     -----------	-----------	 -----------	
+	        -         -	   -         -	     -  http   -	- session -	 -  dist   -	
+	        - browser -  <->   -Stateless-	<->  - session -   <->  - state   -  <-> - cache   -	
+	        -         -	   -         -	     -         -	- manager -	 -         -	
+                -----------	   -----------	     -----------	-----------	 -----------	
+
+
+
+## Externalization Patterns > Externalized Channels 
+## 
+	- Context: Want to be able to opportunistically evolve and recompose our systems 
+                   as business drivers change 
+	- Problem: Interleaving details of intercomponent communication w/ business logic makes
+                   it difficult to leverage functions / data streams in unplanned ways
+	- Forces:  Business processes and components are often reusable in other contexts
+	           Business processes and components are independent of 
+			- Wire protocol
+			- Serialization Method
+			- Fault Tolerance Aspects
+	           Data streams can be trapped and redirected to other processes
+	           Integration architectures are often "design onces, change never" ?
+	           Business logic is often implemented in an integration architecture specific
+                   framework scaffold.
+
+
+Senneca.js : pattern matching
+http://senecajs.org/
+
+
