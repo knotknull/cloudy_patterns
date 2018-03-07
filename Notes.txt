@@ -1,3 +1,259 @@
 Notes for Cloud Native Architecture Patterns
 
 
+Agility  <--> Disruption
+
+Fail fast, early and often and Fix fast, early and often
+
+Waterscrumfall Consequences:
+
+  - Slow Delivery
+  - Large Batch sizes
+  - Infrequent feedback
+  - Increased waste
+
+Go From MTBF and MTTR
+Mean Time Between Failure to Mean Time To Recovery 
+
+Scalability
+
+Automated Recovery - why page someone ??
+
+3 ways to dev ops 
+(Phoenix Project, DevOps Handbook: How to create wordlcass agility, reliability, security)
+
+1. Flow:
+
+Dev  ---------> Ops
+      (flow)
+
+- concept to cash
+- REDUCE BATCH SIZES !!
+
+
+
+2. Feedback:
+
+    <---------
+Dev             Ops
+    ---------> 
+      (feedback)
+
+3. Continual Learining / Experimentation:
+
+     <---------
+Dev  0  0  0  0    Ops
+     ---------> 
+    (iterative loops)
+
+
+
+
+Technically support every source code commit to be deployable to production
+
+3 key aspects:  
+	 - Configuration Management
+	 - Continuous Integration
+	 - Automated Testing
+
+
+	Continuous Delivery
+
+
+         ------------------------------------------------------------------------
+         -                                                                      -
+         -      code     version control        config                  config  -  ---------
+         -                                                                      -          |
+         ------------------------------------------------------------------------          |
+                 |                                |                                        |
+                 |                                |                     --------           |
+                 v                                v           |------>  - UAT  -   <-------|
+            ----------                       --------------   |         --------           |
+            - commit -                       - acceptance -   |          		   |
+            - stage  -                       - stage      -   |         --------------     |
+            ----------                       --------------   |------>  -Performance - <-- |
+                |                                 ^           |         --------------     |
+                |                                 |           |                            |
+                |                                 |           |         ------------       |
+                |                                 |           |------>  -Production-  <----|
+                |                                 |           |         ------------       |
+                v                                 |           | 
+         ------------------------------------------------------------------------
+         -                                                                      -
+         -      Artifact Repository  JAR                                        -
+         -                                                                      -
+         ------------------------------------------------------------------------
+
+
+
+
+
+##  Cloud Infrastructure 
+## 
+
+The Three Rs of Enterprise Security: Rotate, Repave, and Repair
+https://builttoadapt.io/the-three-r-s-of-enterprise-security-rotate-repave-and-repair-f64f6d6ba29d
+
+
+##  Service Models
+## 
+
+
+           [ SOFTWARE ]
+         [  FUNCTIONS   ]
+       [  P L A T F O R M   ]
+     [  C O N T A I N E R S   ]
+  [  I N F R A S T R U C T U R E  ]
+
+The *aaS Pyramid
+
+
+API Driven
+	 - Automation
+	 - Audit
+	 - Authorization
+	 - Accounting
+
+
+Need speed, then create it
+	Load balancers
+	Databases
+	Queues
+	Storage Volumes
+	Private Networks
+
+Need to eliminate
+	- ticket systems 
+	- approval processes 
+	- waiting queues
+	- configuration errors
+
+
+Elastic 
+	- As demand increases we expand capacity by provisioning more resources
+	- As demand decreaese we contract capacity by returning resources
+
+
+What's Your Decompostion Strategy
+https://builttoadapt.io/whats-your-decomposition-strategy-e19b8e72ac8f
+
+	- Bounded contexts
+	- Value Streams 
+	- Single Responsibility Principle
+	- Failure Domains
+	- Anti-Corruption Layers
+
+Modularity
+	- Loose Coupling
+	- High Cohesion
+	- Encapsulation
+	- Well-Defined interface
+
+
+Microservices
+	- modularity from code concept to lifecycle concept
+	NOTE: If a microservice isn't giving you 3 ways, you probably don't need it.
+
+
+Conway's Law:  Any organization that designs a system (defined broadly) will produce a design whose structure 
+               is a copy of the organization's communication structure. 
+
+
+
+## Observability: 
+	- Need Feedback!!
+	- See Failure When It Happens
+	- Measure Everything
+
+
+http://bravenewgeek.com/everything-you-know-about-latency-is-wrong
+
+
+
+         [ Traceability ]                            [ Quantitative  ]
+	  - git SHA                                  [ Measturements ]
+	  - package coordinates 			- business metrics
+	  - API version					- tech metrics
+	
+
+                         ---------------------
+                         -                   -
+                         -     service       -
+                         -    Telemetry      -
+                         -                   -
+                         ---------------------
+
+	[ Health ]				    [ Qualitative  ] 
+	 - Me                                       [ Observations ]
+	 - My Dependencies				- Logging
+							- Exception Reporting
+
+
+
+
+
+[ Deployability ]
+	- Have you automated ALL of you deployment tasks ?
+	- Can you transform a brand new deployment environment into you running architecture
+          without manual work?
+	- Can you vary configuration across environments without rebuilding code ?
+	- Do you deploy like this everywhere ?
+	- Can you do this without your users noticing ?
+
+[ Testability ]
+	- Have you automated ALL testing tasks that you possibly can ?
+	- Do you have to deploy all the things to test anything ?
+	- If testing is an experiment, can you control everything except you experimental variable ?
+	- Can you run the same tests against any environment (including production) ?
+	- Can you verify that you continue to meet your contractual obligations?
+
+[ Disposability ]
+	- Can I destroy a service instance at any time without consequence ?
+	- Can I repave the entire architecture at any time without consequence ?
+	- Can I respond to changes in demand by adding or removing instances of a service without consequence ?
+	- Can I replace a sick service instance with a brand new copy without consequence?
+
+
+[ Replacability ]
+	- Can I route traffic to any available service instance without consequence ?
+	- If I lose an AZ or Resion, can I route traffice to another without consequence ?
+	- Can I swap between multiple implementations of the same service contract without consequence?
+	- Can I swap between multiple running versions of a service without consequence?
+
+
+[ Architectural Responsibilities ]
+	- Architecture can make disposability impossible.
+	- Architecture can make replaceability impossible
+	- Architecture must take charge of removing the consequences of disposing and 
+          replacing service instances 
+
+"Cloud is less a place and more a way of doing things."
+
+Fact: Amazon deploys once per second
+
+
+DevOps Native Architecture
+
+ 	 [ Observability ]
+	 [  Testability  ]
+
+        <--------------------
+          Disposability
+  Dev    0  0  0  0  0  0     Ops
+          Replacability
+        --------------------> 
+
+ 	[  Modularity   ]
+	[ Deployability ]
+
+"Maps of your code"
+https://c4model.com
+
+   - context
+   - containers
+   - components
+   - code
+
+Architecture / design is the code !!
+
+
