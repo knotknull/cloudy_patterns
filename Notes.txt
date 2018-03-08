@@ -305,7 +305,7 @@ Architecture / design is the code !!
 		- Edge Gateway
 		- Fault Tolerance
 
-	- Integraion Patterns: Composition patterns addressing integrations and observability challenges
+	- Integration Patterns: Composition patterns addressing integrations and observability challenges
 		- Event-Driven System
 		- Contract Management 
 		- Integration Telemetry
@@ -525,3 +525,410 @@ http://senecajs.org/
 	        - client  -  <->   - trace   -	<->  - trace   -   <->  - info    -
 	        -         -	   - endpoint-	     - adapter -	- source  -
                 -----------	   -----------	     -----------	-----------
+
+
+
+
+		-----------                             	   ---------------
+	        -         -                            	           -             -
+	        - Agility -  <---------------------------------->  - Resilieance -
+	        -         -                            	           - source      -
+                -----------	                                   ---------------
+                   |  |                                                |  |
+		-----------                             	   ---------------
+	        -         -                            	           -             -
+	        - DevOps  -                                        - Continuous  -
+	        -         -                            	           - Delivery    -
+                -----------	                                   ---------------
+	        ------------------------------------------------------------------
+                -                            Cloud                               -
+	        ------------------------------------------------------------------
+	        ------------------------------------------------------------------
+                -                       Cloud Architecture                       -
+	        ------------------------------------------------------------------
+
+
+
+############################################################################
+##
+## Image Management of Lost Pets using Brick Architecture
+##          (use cloud native characteristics)
+##
+############################################################################
+
+
+
+
+
+
+## Brick Patterns 
+## 
+	- Externalization Patterns: Structural patterns for creating deployable, disposable 
+                                    and replaceable bricks
+		- Externalized Configuration
+		- Externalized State
+		- Externalized Channels
+
+	- Runtime Patterns: Behavioral patterns for creating deployable, replaceable 
+                            and observable bricks
+		- Runtime Reconfiguration
+		- Concurrent Executions
+		- Brick Telemetry
+
+Cloud Native Architectural Qualities
+  - Modularity
+  - Observability
+  - Deployability
+  - Testability
+  - Disposability
+  - Replaceability
+
+
+
+
+
+
+## Mortar Patterns  > Distributed System Patterns > Service Discovery
+## 
+
+	- Context: Decomposition of architecture into services leads to increasingly
+                   more distributed systems.
+	- Problem: As systems become distributed, and as service instance lifecycles become
+                   dynamic and independent, location and communication with dependencies become
+                   more challenging
+	- Forces:  - Cloud platforms often assign auto-generated internal hostname or private IPs 
+			to service instances
+		   - As services are scaled and unhealthy instances are replaced, the addresses of a 
+                     service's instances are constantly changing
+		   - Binding a service to anything other than logical names for its dependencies leads 
+                     to friction in the arhitectural lifecycle.
+		   - Applying Concurrent Execution is made more difficult (or impossible) when binding 
+                     services to fixed addresses for their dependencies
+		   - We may want to remove a service instance from the available pool but keep it running
+                     to troubleshoot a problem
+
+Solution:  Client-side Load Balancing
+
+		          	   -----------
+	                           - Service -
+	                           - registry-
+	        	           -         -
+                          	   -----------
+                                ^              ^             
+                               /                \  
+                              /                  \ 
+                             /                    \             
+		------------    ----------- 	     ------------	
+	        - Service  -    - client  -	     -          -
+	        - Registry -    -  side   -          - brick    -  
+	        -  client  -    -load bal -	     -          -	         
+                ------------    -----------	     ------------	        
+                                                                               
+                           
+                          
+                         
+                        
+
+
+
+
+
+
+
+
+## Mortar Patterns  > Distributed System Patterns > Edge Gateway
+	- Context: Decomposed architectures must always be recomposed. This
+                   recomposition often happens within the user interface layer of 
+                   an application.
+	- Problem: Recomposing an architecture within the User Interface layer presents
+                   significant complexities than can lead to decreased agility and 
+                   degraded user experience.
+	- Forces:  - Systems often must support multiple user experience options (web/mobile/AVR).
+                   - Recomposing architectures as the UI layer can require exposing the architecure to 
+                     the public network.
+                   - API needs for a mobile device are often quite different from a web UI.
+                   - Exposing a network graph to mobile devices can increase latencey, increase data usage,
+                     and degrade battery life.
+                   - UI platforms may not support the integration architecture used for all services.
+                   - Native apps often have longer upgrade cycles.  Recomposing the architecture there can
+                     lead to friction in the architectural lifecycle.
+
+
+	Soluion: API Gateway Variant
+
+		----------- 	   -----------	     -----------	          
+	        -         -	   -         -	     -         -	         
+	        - phone   -  <->   - browser -	<->  - voice   -	          
+	        -         -	   -         -	     -         -	          
+                -----------	   -----------	     -----------	          
+                            ^           ^          ^                              
+                             \          |         /                               
+                              \         |        /                                
+                               \        |       /                                 
+                                V       V      V                                  
+		           	  ----------------                                
+	                   	  -              -	                          
+	                          -     API      -  
+	                   	  -  Gateway     -
+                           	  ----------------
+                                ^       ^      ^
+                               /        |       \ 
+                              /         |        \
+                             /          |         \
+		----------- 	   -----------	     -----------
+	        - catalog -	   - reviews -	     -recommend-
+	        - brick   -  <->   - brick b -	<->  - brick   -
+	        -         -	   -         -	     -         -
+                -----------	   -----------	     -----------
+
+
+	Soluion: Backend for Frontend (BFF)
+
+
+
+		----------- 	   -----------	     -----------	          
+	        -         -	   -         -	     -         -	         
+	        - phone   -  <->   - browser -	<->  - voice   -	          
+	        -         -	   -         -	     -         -	          
+                -----------	   -----------	     -----------	          
+                     ^                  ^                 ^                              
+                     |                  |                 |                               
+                     |                  |                 |                                
+                     |                  |                 |                                 
+                     V                  V                 V                                  
+		 -------------    -------------       -------------                                
+	         -           -	  -           -	      -           -	                          
+	         - Mobile    -    -    Web    -       -    Voice  -  
+	         -   BFF     -    -    BFF    -       -   BFF     -
+                 -------------    -------------       -------------
+                     ^           ^       ^      ^          ^
+                     |         /        |       \          |
+                     |        /         |        \         |
+                     |       /          |         \        |
+		----------- 	   -----------	     -----------
+	        - catalog -	   - reviews -	     -recommend-
+	        - brick   -  <->   - brick b -	<->  - brick   -
+	        -         -	   -         -	     -         -
+                -----------	   -----------	     -----------
+
+
+
+
+
+## Mortar Patterns  > Distributed System Patterns > Fault Tolerance
+
+	- Context: In order to accomplish assigned tasks, each brick
+                   will need to communicate with other bricks, and with 
+                   external systems, to which we'll collectively refer 
+                   as dependencies.
+
+	- Problem: When a brick's dependecies become unhealthy, unreachable, or slower
+                   than normal to respond, that brick's own performance is degraded and
+                   such degredation can potentially cascade across the entire architecture.
+
+	- Forces : - The network is not reliable
+	           - Latency is non-zero and unpredictable.
+	           - Service availability is a product of its dependency availabilities.
+	           - Failures can be transient
+	           - Failures can cascade
+	           - In incorrect or stale response is often prefereable to no response.
+
+	Solution Variants:
+		- Timeouts:   Set time limits for operations that may never complete.
+		- Retries:    Retry failed operations in case of intermitent failure conditions 
+		- Bulkheads:  Isolate failure modes in different bricks or other isolation zones.
+		- Circuite Breakers:  Protect a brick from unhealthy dependencies and 
+                                      provide graceful degradation
+
+
+
+
+## Mortar Patterns  > Integration Patterns > Event-Driven System
+	- Context: Distributed systems often begin with a focus on synchronous, web-based interaction
+
+	- Problem: Syncronous web interactions and traditional approaches to state management often
+                   lead to intractable data management problems, especially in complex domains.
+
+	- Forces: 
+		    - Proper encapsulation of a distributed node includes ownership of its state.
+                      this leads to decomposed data stores, each goverened by a single service.
+		    - Many modern data stores sacrifice ACID transactions in order to support other 
+                      desirable properties
+		    - Normalizing data to a single service can lead to network call proliferation 
+                      for even simple operations
+		    - Business processes that desire transactionality but that include multiple distributed
+                      nodes can be challenging to implement.
+		    - Queries that were previously implemented via SQL joins across multiple contexts now 
+                      require multiple service calls and programmatic joins.
+
+	- Solutions:  Event Sourcing / CQRS (aka RTSR)
+			Write == Commands
+			Reads == Queries
+
+		           	   -----------
+	                           -	     - 
+	                           - client -	
+	                           -	     -  
+                          	   -----------	
+                                        |
+     ___________________________________|__________________________________
+     |                                  v                                 |
+     |		  ------------------------------------------              |
+     |	          -                    API                 -	          |
+     |            ------------------------------------------	          |
+     |               ^                  ^                 ^               |
+     |               |                  |                 |               |
+     |               |                  |                 |               |
+     |               V                  V                 V               |
+     |		 -------------    -------------       -------------       |
+     |	         -  Command  -	  -   Event   -	      -   Query   -	  |
+     |	         - Processor -    - Processor -       - Processor -       |
+     |	         -           -    -           -       -           -       |
+     |           -------------    -------------       -------------       |
+     |                \             ^         \               ^           |
+     |_________________\___________/___________\_____________/____________|
+                        \         /             \           /
+                         v       /               v         /
+		           -------------          -------------                                
+	                   -   Event   -	  -           -	                          
+	                   -   Store   -          - Database  -  
+	                   -           -          -           -
+                           -------------          -------------
+
+
+
+ 
+## Mortar Patterns  > Integration Patterns > Contract Management
+	- Context: Decomposed architecture with decentralized governances still must mainstain
+                   interface compatibility in order to communicate effectively.
+
+	- Problem: As service teams move autonomously and evolve interfaces independently, incompatibilities 
+                   can be introduced, often leading to recentralization of governance via comples versioning
+                   strategies.
+
+	- Forces:  - We want to support autonomous evolution of service interfaces.
+                   - Services mut prove that they meet their existig contracts before they can deploy a 
+                     ver version of their interface   
+                   - Not all upstream services are interested in a given service's new interface features 
+                     and would prefer to keep the existing version.
+                   - Maintaining multiple API versions within a single services is complex.
+                   - Deprecating ans existing API version is ofen political
+                   - Deploying "all the things" in order to perform integration testing across service 
+                     boundaries is expensive.
+
+
+
+	- Solutions: Consumer-Driven Contract
+
+      		 -------------    -------------       -------------        
+      	         -  Consumer -	  - Provider  -	      -  Provider -	   
+      	         -    Brick  - -> -   Mock    -       -  Brick    -        
+      	         -           -    -           -       -           -        
+                 -------------    -------------       -------------        
+                        ^                                   ^
+                        |                                   |                                   
+		  -------------                       ------------------                                
+	          -  Contract -	                      - Specification  -	                          
+	          -   Test    -                       -    Player      -  
+		  -------------                       ------------------                                
+                        |                                     ^
+                        |                                     |
+      		        |      ----------------------------   |
+      	                ---->  - Contract Spec (Document) -  ---          
+                               ----------------------------	          
+
+
+## Mortar Patterns  > Integration Patterns > Integration Telemetry
+	- Context:  Realizing the DevOps way of Feedback requires that we have visibility into the
+                    runtime that we have visibility into the runtime behavior emerging from our
+                    brick composition.
+
+	- Problem:  Distributed systems require additional types of visibility, and common approaches
+                    to visibility fall short.  
+	- Forces:   - Distributed systems have emergent behavior.
+                    - The edges in the graph are as (or more) important than the nodes.
+                    - The health of two connected nodes does not tell you the health of the edge.
+                    - Decentralized governence makes it difficult to know the complete dependency graph
+                      for request handling.
+                    - It can be difficult to isolate and correlate the components of an end-to-end request flow.
+
+	- Solutions:
+		Circuit Breaker Dashboard
+
+      		 -------------  
+      	         -  Circuit  -	
+      	         -  Breaker  -  -------------
+      	         -           -              |
+                 -------------              |
+                        ^                   |             
+                        |                   v
+		  -------------       -------------------       ---------------------
+	          -  Circuit  -	 -->  - Circuit Breaker - -->   - Circuit Breaker   -
+	          -  Breaker  -       - Metrics Agg     -       - Metrics Dashboard -   
+		  -------------       -------------------       --------------------- 
+                        |                   ^                                                  
+                        |                   |                                                  
+		  -------------             |                    
+	          -  Circuit  - -------------	                      
+	          -   Breaker -                       
+		  -------------                       
+
+
+
+
+
+                                                                -------------
+			                                        -   Trace   - 
+                                                                - Dashboard -
+		Distributed Tracing                             -------------
+                                                                     ^
+      		 -------------                                       |
+      	         -           -	       				-------------
+      	         -  Tracer   -  -------------                   - Tracing   -
+      	         -           -              |                   - API   -
+                 -------------              |                   -------------
+                        ^                   |                        ^             
+                        |                   v                        |
+		  -------------       -------------------       -------------
+	          -           -	 -->  - Span Collector  - -->   - Tracing   -
+	          -  Tracer   -       -                 -       - Database  -   
+		  -------------       -------------------       -------------
+                        |                   ^                                                  
+                        |                   |                                                  
+		  -------------             |                    
+	          -           - -------------	                      
+	          -  Tracer   -                       
+		  -------------                       
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Mortar Patterns 
+## 
+	- Distributed Systems Patterns: Composition patterns addressing common distributed system challenges
+		- Service Discovery
+		- Edge Gateway
+		- Fault Tolerance
+
+	- Integration Patterns: Composition patterns addressing integrations and observability challenges
+		- Event-Driven System
+		- Contract Management 
+		- Integration Telemetry
+
+
+
+
+
+
+
+
+
