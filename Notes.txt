@@ -901,34 +901,19 @@ Solution:  Client-side Load Balancing
 		  -------------                       
 
 
+Resources:
+
+https://www.manning.com/books/cloud-native
+https://www.manning.com/books/microservices-patterns
+https://www.safaribooksonline.com/library/view/event-driven-microservices/9781491944165/
+https://www.safaribooksonline.com/library/view/cloud-native-java/9781449374631/
 
 
-
-
-
-
-
-
-
-
-
-## Mortar Patterns 
-## 
-	- Distributed Systems Patterns: Composition patterns addressing common distributed system challenges
-		- Service Discovery
-		- Edge Gateway
-		- Fault Tolerance
-
-	- Integration Patterns: Composition patterns addressing integrations and observability challenges
-		- Event-Driven System
-		- Contract Management 
-		- Integration Telemetry
-
-
-
-
-
-
-
-
+graphing tool:  omnigraffle
+stenciltown.omnigroup.com
+stencil from c4model.com
+https://stenciltown.omnigroup.com/stencils/c4/
+https://c4model.com/#tooling
+https://conduit.io
+Microservices on Kubernetes
 
